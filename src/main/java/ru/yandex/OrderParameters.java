@@ -18,14 +18,14 @@ public class OrderParameters {
     public OrderParameters(List<String> color) {
         RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         this.color = color;
-        this.address = randomValuesGenerator.getRandomAddress();
-        this.firstName = randomValuesGenerator.getRandomFirstName();
-        this.lastName = randomValuesGenerator.getRandomLastName();
+        this.address = randomValuesGenerator.getRandomStringValue();
+        this.firstName = randomValuesGenerator.getRandomStringValue();
+        this.lastName = randomValuesGenerator.getRandomStringValue();
         this.deliveryDate = LocalDateTime.now().toString();
-        this.metroStation = randomValuesGenerator.getRandomMetroStation();
-        this.phone = randomValuesGenerator.getRandomPhone();
+        this.metroStation = randomValuesGenerator.getRandomStringValue();
+        this.phone = randomValuesGenerator.getRandomStringValue();
         this.rentTime = randomValuesGenerator.getRandomRentTime();
-        this.comment = randomValuesGenerator.getRandomComment();
+        this.comment = randomValuesGenerator.getRandomStringValue();
 
     }
 

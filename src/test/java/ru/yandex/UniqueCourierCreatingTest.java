@@ -10,15 +10,13 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class UniqueCourierCreatingTest {
 
-    String login;
-    String password;
+    CourierCredentials randomCredentials;
     int courierId;
 
     @After
     public void tearDown() {
         CourierClient courierClient = new CourierClient();
-        CourierCredentials courierCredentials = new CourierCredentials(login, password);
-        ValidatableResponse loginResponse = courierClient.login(courierCredentials);
+        ValidatableResponse loginResponse = courierClient.login(randomCredentials);
         courierId = loginResponse.extract().body().path("id");
         courierClient.delete(courierId);
     }
@@ -27,10 +25,8 @@ public class UniqueCourierCreatingTest {
     public void creatingNewUniqueCourierReturnCode201Test() {
         RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         CourierClient courierClient = new CourierClient();
-        login = randomValuesGenerator.getRandomLogin();
-        password = randomValuesGenerator.getRandomPassword();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        ValidatableResponse registerResponse = courierClient.registerCourier(credentials);
+        randomCredentials = randomValuesGenerator.getRandomCourierCredentials();
+        ValidatableResponse registerResponse = courierClient.registerCourier(randomCredentials);
 
         assertThat("Код ответа при создании курьера должен быть = 201", registerResponse.extract().statusCode(), equalTo(SC_CREATED));
     }
@@ -39,10 +35,8 @@ public class UniqueCourierCreatingTest {
     public void creatingNewUniqueCourierReturnTrueBodyMessageTest() {
         RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         CourierClient courierClient = new CourierClient();
-        login = randomValuesGenerator.getRandomLogin();
-        password = randomValuesGenerator.getRandomPassword();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        ValidatableResponse registerResponse = courierClient.registerCourier(credentials);
+        randomCredentials = randomValuesGenerator.getRandomCourierCredentials();
+        ValidatableResponse registerResponse = courierClient.registerCourier(randomCredentials);
         String expectedBodyMessage = "true";
         String actualBodyMessage = registerResponse.extract().body().path("ok").toString();
 

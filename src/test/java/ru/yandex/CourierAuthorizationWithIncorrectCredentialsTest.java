@@ -1,46 +1,42 @@
 package ru.yandex;
 
 import io.restassured.response.ValidatableResponse;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.http.HttpStatus.*;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class CourierAuthorizationWithIncorrectCredentialsTest {
 
-    String login;
-    String password;
     int courierId;
+    CourierCredentials randomCredentials;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         CourierClient courierClient = new CourierClient();
         RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
-        login = randomValuesGenerator.getRandomLogin();
-        password = randomValuesGenerator.getRandomPassword();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        courierClient.registerCourier(credentials);
-        ValidatableResponse responseLogin = courierClient.login(credentials);
+        randomCredentials = randomValuesGenerator.getRandomCourierCredentials();
+        courierClient.registerCourier(randomCredentials);
+        ValidatableResponse responseLogin = courierClient.login(randomCredentials);
         courierId = responseLogin.extract().body().path("id");
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         CourierClient courierClient = new CourierClient();
         courierClient.delete(courierId);
     }
 
     @Test
-    public void authorizationWithIncorrectPasswordReturns404ErrorTest(){
+    public void authorizationWithIncorrectPasswordReturns404ErrorTest() {
         CourierClient courierClient = new CourierClient();
-        RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         //Меняем пароль при правильном логине
-        password = randomValuesGenerator.getRandomPassword();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        ValidatableResponse loginResponse = courierClient.login(credentials);
+        randomCredentials.setPassword(RandomStringUtils.randomAlphabetic(7));
+        ValidatableResponse loginResponse = courierClient.login(randomCredentials);
         int responseCode = loginResponse.extract().statusCode();
         String responseString = loginResponse.extract().body().path("message");
         String expectedString = "Учетная запись не найдена";
@@ -50,13 +46,11 @@ public class CourierAuthorizationWithIncorrectCredentialsTest {
     }
 
     @Test
-    public void authorizationWithIncorrectLoginReturns404ErrorTest(){
+    public void authorizationWithIncorrectLoginReturns404ErrorTest() {
         CourierClient courierClient = new CourierClient();
-        RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
-        //Меняем пароль при правильном логине
-        login = randomValuesGenerator.getRandomLogin();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        ValidatableResponse loginResponse = courierClient.login(credentials);
+        //Меняем логин при правильном логине
+        randomCredentials.setPassword(RandomStringUtils.randomAlphabetic(7));
+        ValidatableResponse loginResponse = courierClient.login(randomCredentials);
         int responseCode = loginResponse.extract().statusCode();
         String responseString = loginResponse.extract().body().path("message");
         String expectedString = "Учетная запись не найдена";

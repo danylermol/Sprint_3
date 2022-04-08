@@ -11,19 +11,16 @@ import static org.hamcrest.Matchers.equalTo;
 
 
 public class AlreadyExistingCourierCreationTest {
-    String login;
-    String password;
     int courierId;
+    CourierCredentials randomCredentials;
 
     @Before
     public void setUp() {
         RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         CourierClient courierClient = new CourierClient();
-        login = randomValuesGenerator.getRandomLogin();
-        password = randomValuesGenerator.getRandomPassword();
-        CourierCredentials courierCredentials = new CourierCredentials(login, password);
-        courierClient.registerCourier(courierCredentials);
-        ValidatableResponse registerCourierResponse = courierClient.login(courierCredentials);
+        randomCredentials = randomValuesGenerator.getRandomCourierCredentials();
+        courierClient.registerCourier(randomCredentials);
+        ValidatableResponse registerCourierResponse = courierClient.login(randomCredentials);
         courierId = registerCourierResponse.extract().body().path("id");
 
     }
@@ -37,8 +34,7 @@ public class AlreadyExistingCourierCreationTest {
     @Test
     public void creatingAlreadyExistingCourierReturn409CodeTest() {
         CourierClient courierClient = new CourierClient();
-        CourierCredentials courierCredentials = new CourierCredentials(login, password);
-        ValidatableResponse responseAfterRegisterExistingCourierClient = courierClient.registerCourier(courierCredentials);
+        ValidatableResponse responseAfterRegisterExistingCourierClient = courierClient.registerCourier(randomCredentials);
         String expectedMessage = "Этот логин уже используется";
         String actualMessage = responseAfterRegisterExistingCourierClient.extract().body().path("message");
 

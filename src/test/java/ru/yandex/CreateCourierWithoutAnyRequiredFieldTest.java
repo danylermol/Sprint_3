@@ -1,6 +1,7 @@
 package ru.yandex;
 
 import io.restassured.response.ValidatableResponse;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
@@ -9,16 +10,11 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class CreateCourierWithoutAnyRequiredFieldTest {
 
-    String login;
-    String password;
-
     @Test
     public void createCourierWithoutPasswordReturnError400Test() {
         CourierClient courierClient = new CourierClient();
-        RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         CourierCredentials courierCredentials = new CourierCredentials();
-        login = randomValuesGenerator.getRandomLogin();
-        courierCredentials.setLogin(login);
+        courierCredentials.setLogin(RandomStringUtils.randomAlphabetic(10));
         ValidatableResponse registerCourierResponseWithoutPassword = courierClient.registerCourier(courierCredentials);
         String messageActual = registerCourierResponseWithoutPassword.extract().body().path("message");
         String messageExpected = "Недостаточно данных для создания учетной записи";
@@ -31,10 +27,8 @@ public class CreateCourierWithoutAnyRequiredFieldTest {
     @Test
     public void createCourierWithoutLoginReturnError400Test() {
         CourierClient courierClient = new CourierClient();
-        RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
         CourierCredentials courierCredentials = new CourierCredentials();
-        password = randomValuesGenerator.getRandomPassword();
-        courierCredentials.setPassword(password);
+        courierCredentials.setPassword(RandomStringUtils.randomAlphabetic(10));
         ValidatableResponse response = courierClient.registerCourier(courierCredentials);
         String messageActual = response.extract().body().path("message");
         String messageExpected = "Недостаточно данных для создания учетной записи";

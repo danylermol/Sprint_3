@@ -11,23 +11,20 @@ import static org.hamcrest.Matchers.*;
 
 public class CourierAuthorizationTest {
 
-    String login;
-    String password;
     int courierId;
+    CourierCredentials randomCredentials;
 
     @Before
     public void setUp() {
         CourierClient courierClient = new CourierClient();
         RandomValuesGenerator randomValuesGenerator = new RandomValuesGenerator();
-        login = randomValuesGenerator.getRandomLogin();
-        password = randomValuesGenerator.getRandomPassword();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        courierClient.registerCourier(credentials);
+        randomCredentials = randomValuesGenerator.getRandomCourierCredentials();
+        courierClient.registerCourier(randomCredentials);
 
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         CourierClient courierClient = new CourierClient();
         courierClient.delete(courierId);
 
@@ -36,8 +33,7 @@ public class CourierAuthorizationTest {
     @Test
     public void courierAuthorizationReturns200CodeTest() {
         CourierClient courierClient = new CourierClient();
-        CourierCredentials credentials = new CourierCredentials(login, password);
-        ValidatableResponse response = courierClient.login(credentials);
+        ValidatableResponse response = courierClient.login(randomCredentials);
         int responseCode = response.extract().statusCode();
         courierId = response.extract().body().path("id");
 
