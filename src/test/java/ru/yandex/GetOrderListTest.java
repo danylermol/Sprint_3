@@ -10,8 +10,8 @@ import java.util.List;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
+
 public class GetOrderListTest {
     @Test
     public void getOrderListWithoutParametersReturns200CodeAndNotNullBody(){
@@ -19,7 +19,7 @@ public class GetOrderListTest {
         ValidatableResponse response = orderClient.getOrderList();
 
         assertThat("Должен вернуться код 200", response.extract().statusCode(), equalTo(SC_OK));
-        assertThat("Ключ orders в теле ответа не должен быть пустым", response.extract().body().path("orders"), notNullValue());
+        assertThat("Ключ orders в теле ответа не должен быть пустым", response.extract().body().path("orders"), hasSize(greaterThan(1)));
     }
 
 }
